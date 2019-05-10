@@ -66,7 +66,7 @@ class Problem:
         state2 од состојбата state1 преку акцијата action, претпоставувајќи
         дека цената на патот до состојбата state1 е c. Ако проблемот е таков
         што патот не е важен, оваа функција ќе ја разгледува само состојбата
-        state2. Ако патот е важен, ќе ја разгледува цената c и можеби и
+        state2. Ако патот е важен, ќе ја разгледува цената c и можеби и
         state1 и action. Даденава имплементација му доделува цена 1 на секој
         чекор од патот.
 
@@ -80,7 +80,7 @@ class Problem:
         return c + 1
 
     def value(self):
-        """За проблеми на оптимизација, секоја состојба си има вредност. 
+        """За проблеми на оптимизација, секоја состојба си има вредност.
         Hill-climbing и сличните алгоритми се обидуваат да ја максимизираат
         оваа вредност.
 
@@ -191,11 +191,11 @@ class Node:
 
 class Queue:
     """Queue е апстрактна класа / интерфејс. Постојат 3 типа:
-        Stack(): Last In First Out Queue (стек).
-        FIFOQueue(): First In First Out Queue (редица).
-        PriorityQueue(order, f): Queue во сортиран редослед (подразбирливо,од најмалиот кон
+        Stack(): Last In First Out Queue (стек).
+        FIFOQueue(): First In First Out Queue (редица).
+        PriorityQueue(order, f): Queue во сортиран редослед (подразбирливо,од најмалиот кон
                                  најголемиот јазол).
-    """
+    """
 
     def __init__(self):
         raise NotImplementedError
@@ -579,20 +579,20 @@ def recursive_best_first_search(problem, h=None):
     result, bestf = RBFS(problem, node, infinity)
     return result
 
-
+import copy
 
 class CrnoBelo(Problem):
 
     def __init__(self, n, initial):
+
+        # print(goal)
         goal = []
+
         for i in range(0, n):
             row = []
             for j in range(0, n):
                 row.append(1)
-
             goal.append(row)
-
-        # print(goal)
 
         matrixOfState = []
         for i in range(0, n):
@@ -616,8 +616,20 @@ class CrnoBelo(Problem):
         :return: дали дадената состојба е целна состојба
         :rtype: bool
         """
-        # print(state)
+        # # print(state)
+        # numberOfBlacks = 0
+        #
+        # n = len(state)
+        #
+        # for i in range(0, n):
+        #     for j in range (0, n):
+        #         numberOfBlacks += state[i][j]
+        #
+        # # print(state, numberOfBlacks, n)
+        # return numberOfBlacks == n*n
+
         return state == self.goal
+
 
     def successor(self, state):
         """За дадена состојба, врати речник од парови {акција : состојба}
@@ -632,35 +644,30 @@ class CrnoBelo(Problem):
         """
         succ = {}
 
-        dx = [1, -1, 0, 0]
-        dy = [0, 0, 1, -1]
-
         for i in range(0, n):
 
             for j in range(0, n):
 
-                # tmp = state.copy()
-
                 tmp = []
 
                 for row in state:
-                    tmpRow = []
+                    newRow = []
                     for e in row:
-                        tmpRow.append(e)
-                    tmp.append(tmpRow)
+                        newRow.append(e)
+                    tmp.append(newRow)
+
+                for z in range(0, n):
+                    tmp[i][z] = 1 - tmp[i][z]
+                    tmp[z][j] = 1 - tmp[z][j]
 
                 tmp[i][j] = 1 - tmp[i][j]
 
-
-
-                for z in range(0, 4):
-                    if i + dx[z] >= 0 and i + dx[z] < n and j + dy[z] >= 0 and j + dy[z] < n:
-                        tmp[i + dx[z]][j + dy[z]] = 1 - tmp[i+dx[z]][j+dy[z]]
-
                 s = "x: " + str(i) + ", y: " + str(j)
 
+                # if i == 0 and j == 0:
+                    # print(tmp)
 
-                succ[str(s)] = tmp
+                succ[s] = tmp
 
         # print(succ)
         return succ
@@ -677,7 +684,7 @@ class CrnoBelo(Problem):
         state2 од состојбата state1 преку акцијата action, претпоставувајќи
         дека цената на патот до состојбата state1 е c. Ако проблемот е таков
         што патот не е важен, оваа функција ќе ја разгледува само состојбата
-        state2. Ако патот е важен, ќе ја разгледува цената c и можеби и
+        state2. Ако патот е важен, ќе ја разгледува цената c и можеби и
         state1 и action. Даденава имплементација му доделува цена 1 на секој
         чекор од патот.
 
@@ -691,7 +698,7 @@ class CrnoBelo(Problem):
         return c + 1
 
     def value(self):
-        """За проблеми на оптимизација, секоја состојба си има вредност. 
+        """За проблеми на оптимизација, секоја состојба си има вредност.
         Hill-climbing и сличните алгоритми се обидуваат да ја максимизираат
         оваа вредност.
 
@@ -707,7 +714,7 @@ class CrnoBelo(Problem):
 
         for row in sostojba:
             for e in row:
-                if e == 1: # broi kolku beli polinja ima
+                if e == 1: # broi kolku crni polinja ima
                     sum_value += 1
 
         # print(sostojba)
@@ -715,7 +722,7 @@ class CrnoBelo(Problem):
 
         n = len(sostojba)
 
-        return sum_value
+        return n*n - sum_value
 
 n = int(input())
 polinja = list(map(int, input().split(',')))
